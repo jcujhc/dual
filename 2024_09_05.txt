@@ -1,0 +1,33 @@
+Oracle = veštec
+
+Architektúra
+ 
+ 
+ 
+Procesy databázového server
+ 
+-	Spúšťajú sa pri štarte inštancie, pracujú na pozadí  spolu s pamäťovou oblasťou SGA tvoria inštanciu DB Oracle.
+-	Proces na pozadí je blok spustiteľného kódu, určený pre prevádzanie špecifickej úlohy.
+-	Podieľajú sa na organizovaní dát pre optimálne fungovanie databázového servera ako celku.
+ 
+SMON (System Monitor)
+-	pri páde systému, alebo zlyhaní inštancie prevedie obnovu inštancie aplikovaním záznamu z online redologov na dátové súbory (datafiles)
+ 
+
+
+PMON (Process Monitor)
+-	pri prerušení užívateľského pripojenia poupratuje,
+-	vyčistí vyrovnávaciu pamäť a ostatné prostriedky (odomkne riadky apod.),
+ 
+DBWn (Database Writer)
+-	Zapisuje nové, alebo zmenené bloky (dirty blocks) z vyrovnávacej pamäte (buffer cache) do dátových súborov (datafiles) .
+ 
+LGWR (Log Writer)
+-	Riadi správu vyrovnávacej pamäte protokolu. (redo log buffer)
+-	Je to najaktívnejší process ( v inštancii s veľkou aktivitou DML príkazov).
+ 
+ARCn (Archiver)
+-	Ak je DB v režime ARCHIVELOG, ARCn prevádza kopírovanie online súborov (redologov) do archívnych súborov protokolu (redologov).
+
+
+
