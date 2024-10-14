@@ -1,3 +1,11 @@
+AS ROOT  
+yum install epel*
+dnf install rlwrap
+su - oracle
+vi .bashrc
+alias wm+='sqlplus jcuj/start123@//10.202.0.208:51521/tDB1'
+. .bashrc
+
 Úvod do SQL
 
 
