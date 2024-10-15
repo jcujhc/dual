@@ -70,28 +70,28 @@ Príklad DML:
 
 SQL – vkladanie dát
 
-INSERT INTO T_STUDENTS VALUES (1,625916,"Alisa","Foreman","alisa.foreman@tele-kom.de","(358) 538-2171");
-INSERT INTO T_STUDENTS VALUES (2,50212,"Benjamin","Lara","benjamin.lara@tele-kom.de","(316) 966-5756");
-INSERT INTO T_STUDENTS VALUES (3,210127,"Ali","Nixon","ali.nixon@tele-kom.de","(277) 335-2112");
-INSERT INTO T_STUDENTS VALUES (4,12569,"Gannon","White","alisa.foreman@tele-kom.de","(322) 688-4744");
-INSERT INTO T_STUDENTS VALUES (5,702678,"Benedict","Gamble","alisa.foreman@tele-kom.de","(296) 381-2674");
+INSERT INTO T_STUDENTS VALUES (1,625916,'Alisa','Foreman','alisa.foreman@tele-kom.de','(358) 538-2171');
+INSERT INTO T_STUDENTS VALUES (2,50212,'Benjamin','Lara','benjamin.lara@tele-kom.de','(316) 966-5756');
+INSERT INTO T_STUDENTS VALUES (3,210127,'Ali','Nixon','ali.nixon@tele-kom.de','(277) 335-2112');
+INSERT INTO T_STUDENTS VALUES (4,12569,'Gannon','White','alisa.foreman@tele-kom.de','(322) 688-4744');
+INSERT INTO T_STUDENTS VALUES (5,702678,'Benedict','Gamble','alisa.foreman@tele-kom.de','(296) 381-2674');
 
 
 
 
 
 
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (1,"ED43025","Oracle Database: Develop PL/SQL Programs","online","5 days",1500);
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (2,"ED11000","Linux System Administration","online","3 days",1589);
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (3,"ED78542","ADM950 Secure SAP System Management","online","5 days",2560);
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (4,"ED55796","Oracle WebLogic Server11g: Administration","online","4 days",1156);
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (5,"ED12896","Oracle Database Basics Application Admins","onside","5 days",1486);
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (6,"ED13698","Object-Oriented Analysis and Design UML","online","5 days",2800);
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (7,"ED25487","GitLab – basics and CI/CD administration","online","1 day",386);
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (8,"ED48796","BIT100 - SAP Integration Overview","onside","5 days",3580);
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (9,"ED58975","Analyzing Data with Power BI","onside","2 days",634);
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (10,"ED48213","Linux – Security and network (LNX5)","onside","2 days",720);
-INSERT INTO T_ZOZNAM_SKOLENI VALUES (10,"ED48444","Linux – Security and network (LNX5)","onside","2 days",720);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (1,'ED43025','Oracle Database: Develop PL/SQL Programs','online','5 days',1500);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (2,'ED11000','Linux System Administration','online','3 days',1589);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (3,'ED78542','ADM950 Secure SAP System Management','online','5 days',2560);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (4,'ED55796','Oracle WebLogic Server11g: Administration','online','4 days',1156);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (5,'ED12896','Oracle Database Basics Application Admins','onside','5 days',1486);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (6,'ED13698','Object-Oriented Analysis and Design UML','online','5 days',2800);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (7,'ED25487','GitLab – basics and CI/CD administration','online','1 day',386);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (8,'ED48796','BIT100 - SAP Integration Overview','onside','5 days',3580);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (9,'ED58975','Analyzing Data with Power BI','onside','2 days',634);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (10,'ED48213','Linux – Security and network (LNX5)','onside','2 days',720);
+INSERT INTO T_ZOZNAM_SKOLENI VALUES (10,'ED48444','Linux – Security and network (LNX5)','onside','2 days',720);
 
 SQL – aktualizácia dát - UPDATE
 ! Podmienka WHERE je nepovinná, ale jej nezadanie vedie k zmene všetkých hodnot v prisluhajúcom stĺpci
