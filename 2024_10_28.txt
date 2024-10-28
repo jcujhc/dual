@@ -6,9 +6,13 @@
 [B]
 df -h
 ls -la /u01/app/oracle/product/
+alias
+
+?? -> alias s+='rlwrap -l .rlwrap/tDB1.local.log sqlplus / as sysdba'
+s+ ## sqlplus / as sysdba
 vyselectovat : show parameter diag     (----> tail na ALERTLOG)
 
-vyselectovat datafiles
+## vyselectovat datafiles
 set lines 200
 col FILE_NAME format a60
 select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
