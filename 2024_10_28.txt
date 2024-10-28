@@ -3,6 +3,7 @@
 
 2x putty -> oracle
 
+[B]
 df -h
 ls -la /u01/app/oracle/product/
 vyselectovat : show parameter diag     (----> tail na ALERTLOG)
@@ -86,8 +87,9 @@ AND    table_name = DECODE(UPPER('&2'), 'ALL', table_name, UPPER('&2'));
 
 TODO
 --> DELETE, DROP , TRUNCATE  ... checkovat dbspace.sql
---> expdp prezentacia
 
+[C]
+--> expdp prezentacia
 --> expdp priklady
 mkdir /u01/app/oracle/product/export
 ls -ltr /u01/app/oracle/product/export
