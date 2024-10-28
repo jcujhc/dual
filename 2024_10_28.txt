@@ -115,7 +115,6 @@ sqlplus / a sysdba
 create or replace directory EXPORTDIR as '/u01/app/oracle/product/export';
 grant read, write on directory EXPORTDIR to HR;
 
-
 set lines 200
 set lines 200
 col OBJECT_NAME for a40
@@ -124,33 +123,32 @@ select OBJECT_NAME,OBJECT_TYPE from user_objects;
 expdp HR/start123 dumpfile=HR_schema.dmp logfile=HR_schema.log tables=REGIONS directory=EXPORTDIR
 expdp HR/start123 dumpfile=HR_schema.dmp logfile=HR_schema.log directory=EXPORTDIR
 
-# EXPDP použitím par file
 
+# EXPDP použitím par file
 file: mojexport.par
-USERID=student01/start123
-DIRECTORY=DPDIR
-DUMPFILE=expdp_db.30072019.dmp
-LOGFILE=expdp_db.30072019.log
-SCHEMAS=student1
-# or TABLES=EMPLOYEES, DEPARTMENTS
+USERID=HR/start123
+DIRECTORY=EXPORTDIR
+DUMPFILE=expdp_db.20241029.dmp
+LOGFILE=expdp_db.20241029.log
+SCHEMAS=HR
+# or TABLES=EMPLOYEES, DEPARTMENTS, REGIONS
 
 $ expdp parfile=mojexport.par
 
-
 --> impdp
-expdp HR/start dumpfile= logfile= tables= directories=
+impdp HR/start dumpfile=HR_schema.dmp logfile=HR_schema.log tables=REGIONS directory=EXPORTDIR
 
 --> impdp parfile
 file: mojexport.par
-USERID=student01/start123
-DIRECTORY=DPDIR
-DUMPFILE=expdp_db.30072019.dmp
-LOGFILE=expdp_db.30072019.log
-SCHEMAS=student1
-# or TABLES=EMPLOYEES, DEPARTMENTS
+USERID=HR/start123
+DIRECTORY=EXPORTDIR
+DUMPFILE=expdp_db.20241029.dmp
+LOGFILE=impdp_db.20241029.log
+SCHEMAS=HR
+# or TABLES=EMPLOYEES, DEPARTMENTS, REGIONS
 
 IMPDP
-$ impdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=impdp_db.log directory=DPDIR tables=mojatabulka
+$ impdp HR/start123@tDB1 dumpfile=expdp_db.20241029.dmp LOGFILE=impdp_db.20241029.log directory=EXPORTDIR tables=REGIONS
 
 table_exists_action je použitá pri impdp keď tabuľka už existuje v DB                 
 table_exists_action=skip:  ignoruj data v import file a nechaj existujúcu tabuľku nedotknutú. Toto je default option a neplatí pri nastavení  content=data_only.
@@ -164,7 +162,8 @@ TABLE_EXISTS_ACTION = {SKIP | APPEND | TRUNCATE | REPLACE}
 INCLUDE=
 EXCLUDE=TABLES:
 REMAP_SCHEMA=HR:HR2
-REMAP_TABLESPACE=EXAMPLE:HR2_DATA
+REMAP_TABLESPACE=SYSAUX:DATA
+
 
 AS SYSDBA
 expdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
