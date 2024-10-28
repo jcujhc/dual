@@ -17,6 +17,7 @@ set lines 200
 col FILE_NAME format a60
 select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
 
+col USERNAME for a20
 select USERNAME,DEFAULT_TABLESPACE,PASSWORD_CHANGE_DATE,LAST_LOGIN from dba_users where USERNAME in ('HR');
 
 set lines 200
@@ -26,8 +27,12 @@ select USERNAME,DEFAULT_TABLESPACE,to_char(PASSWORD_CHANGE_DATE, 'dd.mm.yyyy hh2
 alter user HR unlock;
 alter user HR identified by "start123";
 # test
-sqlplus HR   
-
+sqlplus HR/start123
+set lines 200
+set lines 200
+col OBJECT_NAME for a40
+-- select OWNER,OBJECT_NAME,OBJECT_TYPE from user_objects;
+select OWNER,OBJECT_NAME,OBJECT_TYPE from user_objects;
 
 sqlplus / as sysdba
 ALTER DATABASE MOVE DATAFILE 3 TO '/u01/app/oracle/product/data2/TDB1/sysaux01.dbf' ONLINE;
@@ -42,11 +47,7 @@ col OBJECT_NAME for a40
 col OWNER for a5
 select OWNER,OBJECT_NAME,OBJECT_TYPE from dba_objects where owner in ('HR');
 
-sqlplus HR
-set lines 200
-set lines 200
-col OBJECT_NAME for a40
-select OWNER,OBJECT_NAME,OBJECT_TYPE from user_objects;
+sqlplus HR/start123
 
 SELECT SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments WHERE segment_name='your_table_name';
 SELECT SEGMENT_NAME,SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments WHERE segment_name='your_table_name' group by segment_name;
@@ -90,7 +91,19 @@ WHERE  owner      = UPPER('&1')
 AND    table_name = DECODE(UPPER('&2'), 'ALL', table_name, UPPER('&2'));
 
 TODO
---> DELETE, DROP , TRUNCATE  ... checkovat dbspace.sql
+sqlplus HR/start123
+select count(*) from TEST;
+select * from TEST where rownum<2;
+select OWNER, TABLE_NAME from TEST where OWNER like 'HR';
+# delete from TEST;
+--> s+ @dbspace.sql
+--> select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
+# DROP 
+--> s+ @dbspace.sql
+--> select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
+# TRUNCATE 
+--> s+ @dbspace.sql
+--> select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
 
 [C]
 --> expdp prezentacia
@@ -102,8 +115,14 @@ sqlplus / a sysdba
 create or replace directory EXPORTDIR as '/u01/app/oracle/product/export';
 grant read, write on directory EXPORTDIR to HR;
 
-expdp HR/start123 dumpfile=HR_schema.dmp logfile=HR_schema.log tables=XXX directory=EXPORTDIR
-expdp HR/start123@KOZA dumpfile=HR_schema.dmp logfile=HR_schema.log tables=XXX directory=EXPORTDIR
+
+set lines 200
+set lines 200
+col OBJECT_NAME for a40
+select OBJECT_NAME,OBJECT_TYPE from user_objects;
+
+expdp HR/start123 dumpfile=HR_schema.dmp logfile=HR_schema.log tables=REGIONS directory=EXPORTDIR
+expdp HR/start123 dumpfile=HR_schema.dmp logfile=HR_schema.log directory=EXPORTDIR
 
 # EXPDP použitím par file
 
