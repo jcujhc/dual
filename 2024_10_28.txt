@@ -1,0 +1,184 @@
+
+DOKONCIT PRIPRAVU
+----------------------------------------------------------------------------------------------------
+--> Prakticka_uloha_17102024_RIESENIE
+
+2x putty -> oracle
+
+df -h
+ls -la /u01/app/oracle/product/
+vyselectovat : show parameter diag
+
+vyselectovat datafiles
+set lines 200
+col FILE_NAME format a60
+select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
+
+select USERNAME,DEFAULT_TABLESPACE,PASSWORD_CHANGE_DATE,LAST_LOGIN from dba_users where USERNAME in ('HR');
+
+set lines 200
+col USERNAME for a30
+select USERNAME,DEFAULT_TABLESPACE,to_char(PASSWORD_CHANGE_DATE, 'dd.mm.yyyy hh24:mi:ss'),to_char(LAST_LOGIN, 'dd.mm.yyyy hh24:mi:ss'),ACCOUNT_STATUS from dba_users where USERNAME in ('HR');
+
+alter user HR unlock;
+
+alter user HR identified by "start123";
+
+sqlplus HR   
+
+----> tail na ALERTLOG
+
+sqlplus / as sysdba
+ALTER DATABASE MOVE DATAFILE 3 TO '/u01/app/oracle/product/data2/TDB1/sysaux01.dbf' ONLINE;
+ 
+# ALTER DATABASE MOVE DATAFILE '/u01/app/oracle/oradata/TDB1/sysaux01.dbf'
+
+set lines 200
+col FILE_NAME format a60
+select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
+
+set lines 200 pages 500
+col OBJECT_NAME for a40
+col OWNER for a5
+select OWNER,OBJECT_NAME,OBJECT_TYPE from dba_objects where owner in ('HR');
+
+sqlplus HR
+set lines 200
+set lines 200
+col OBJECT_NAME for a40
+select OWNER,OBJECT_NAME,OBJECT_TYPE from user_objects;
+
+SELECT SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments WHERE segment_name='your_table_name';
+
+SELECT SEGMENT_NAME,SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments WHERE segment_name='your_table_name' group by segment_name;
+
+SELECT SEGMENT_NAME,SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments group by segment_name;
+
+# CREATE TABLE TEST as SELECT a.* from all_objects a,all_objects b;
+set time on timong on
+CREATE TABLE TEST as SELECT a.* from all_tables a,all_tables b;
+
+SELECT SEGMENT_NAME,SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments WHERE segment_name='&your_table_name' group by segment_name;
+
+vytvorme si script:
+
+spool /tmp/create_table.log
+set time on timing on echo on
+CREATE TABLE TEST1 as SELECT a.* from all_tables a,all_tables b;
+CREATE TABLE TEST2 as SELECT a.* from all_tables a,all_tables b;
+CREATE TABLE TEST3 as SELECT a.* from all_tables a,all_tables b;
+CREATE TABLE TEST4 as SELECT a.* from all_tables a,all_tables b;
+CREATE TABLE TEST5 as SELECT a.* from all_tables a,all_tables b;
+CREATE TABLE TEST6 as SELECT a.* from all_tables a,all_tables b;
+CREATE TABLE TEST7 as SELECT a.* from all_tables a,all_tables b;
+CREATE TABLE TEST8 as SELECT a.* from all_tables a,all_tables b;
+CREATE TABLE TEST9 as SELECT a.* from all_tables a,all_tables b;
+CREATE TABLE TEST10 as SELECT a.* from all_tables a,all_tables b;
+exit;
+
+SELECT SEGMENT_NAME,SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments group by segment_name;
+
+set lines 200
+set lines 200
+col OBJECT_NAME for a40
+select OWNER,OBJECT_NAME,OBJECT_TYPE from dba_objects where owner in ('HR');
+
+## https://oracle-base.com/dba/script?category=script_creation&file=view_ddl.sql
+
+SELECT DBMS_METADATA.get_ddl ('INDEX', index_name, owner)
+FROM   all_indexes
+WHERE  owner      = UPPER('&1')
+AND    table_name = DECODE(UPPER('&2'), 'ALL', table_name, UPPER('&2'));
+
+TODO
+--> todo phobos delete statement, drop
+--> expdp prezentacia
+--> expdp priklady
+
+mkdir /u01/app/oracle/product/export
+ls -ltr /u01/app/oracle/product/export
+
+sqlplus / a sysdba
+create or replace directory EXPORTDIR as '/u01/app/oracle/product/export';
+grant read, write on directory EXPORTDIR to HR;
+
+expdp HR/start123 dumpfile=HR_schema.dmp logfile=HR_schema.log tables=XXX directory=EXPORTDIR
+
+expdp HR/start123@KOZA dumpfile=HR_schema.dmp logfile=HR_schema.log tables=XXX directory=EXPORTDIR
+
+# EXPDP použitím par file
+
+file: mojexport.par
+USERID=student01/start123
+DIRECTORY=DPDIR
+DUMPFILE=expdp_db.30072019.dmp
+LOGFILE=expdp_db.30072019.log
+SCHEMAS=student1
+# or TABLES=EMPLOYEES, DEPARTMENTS
+
+$ expdp parfile=mojexport.par
+
+
+--> IMPDP
+file: mojexport.par
+USERID=student01/start123
+DIRECTORY=DPDIR
+DUMPFILE=expdp_db.30072019.dmp
+LOGFILE=expdp_db.30072019.log
+SCHEMAS=student1
+# or TABLES=EMPLOYEES, DEPARTMENTS
+
+IMPDP
+$ impdp student1/start123@DB_tSKDB dumpfile=expdp_db.30072019.dmp LOGFILE=impdp_db.log directory=DPDIR tables=mojatabulka
+
+table_exists_action je použitá pri impdp keď tabuľka už existuje v DB                 
+table_exists_action=skip:  ignoruj data v import file a nechaj existujúcu tabuľku nedotknutú. Toto je default option a neplatí pri nastavení  content=data_only.
+table_exists_action=append:  týmto sa povie, pridaj exportované dá do existujúcej tabuľky, nechaj exist. riadny a pridaj nové.
+table_exists_action=truncate:  toto nám vraví, truncate existujúcu tabuľku, ponechaj štruktúru a importni riadky z dump file. Pri použití tejto option nesmie existovat  referenčné integrita (constraints) na cieľovej tabuľke.  
+table_exists_action=replace:  toto nám vraví, zmaž celú tabuľku a nahraď definíciu a riadky tabuľky 
+
+DALSIE MOZNOSTI IMPDP
+--------------------------------------------------------------
+TABLE_EXISTS_ACTION = {SKIP | APPEND | TRUNCATE | REPLACE}
+INCLUDE=
+EXCLUDE=TABLES:
+REMAP_SCHEMA=HR:HR2
+REMAP_TABLESPACE=EXAMPLE:HR2_DATA
+
+
+AS SYSDBA
+expdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+
+
+SQL> create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
+
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
+
+
+# HISTORY Z MOJEJ PUTTY:
+scp oracle@10.233.133.153:/u01/data/export/expdp_SCH_STUDENT15_24052023.dmp /u01/data/DUMP/
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+impdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+expdp \"/ as sysdba\" dumpfile=expdp_STUDENT15.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:APPLIKACNA_SCH
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log table_exists_action=replace
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log table_exists_action=replace
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
+impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR tables=STUDENT15.t2 log=expdp.log table_exists_action=replace
+
+
+
+
+--> impdp
+expdp HR/start dumpfile= logfile= tables= directories=
+
+
+
+
+
