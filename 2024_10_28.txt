@@ -32,7 +32,7 @@ set lines 200
 set lines 200
 col OBJECT_NAME for a40
 -- select OWNER,OBJECT_NAME,OBJECT_TYPE from user_objects;
-select OWNER,OBJECT_NAME,OBJECT_TYPE from user_objects;
+select OBJECT_NAME,OBJECT_TYPE from user_objects;
 
 sqlplus / as sysdba
 ALTER DATABASE MOVE DATAFILE 3 TO '/u01/app/oracle/product/data2/TDB1/sysaux01.dbf' ONLINE;
@@ -111,7 +111,7 @@ select OWNER, TABLE_NAME from TEST where OWNER like 'HR';
 mkdir /u01/app/oracle/product/export
 ls -ltr /u01/app/oracle/product/export
 
-sqlplus / a sysdba
+sqlplus / as sysdba
 create or replace directory EXPORTDIR as '/u01/app/oracle/product/export';
 grant read, write on directory EXPORTDIR to HR;
 
