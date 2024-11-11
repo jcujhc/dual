@@ -1,27 +1,48 @@
-sqlplus / as sysdba
-ALTER DATABASE MOVE DATAFILE 3 TO '/u01/app/oracle/product/data2/TDB1/sysaux01.dbf' ONLINE;
-# ALTER DATABASE MOVE DATAFILE '/u01/app/oracle/oradata/TDB1/sysaux01.dbf'
+# sqlplus / as sysdba
+s+
+
+#skolntrolovat priecinok: ls -la /u01/app/oracle/product/data2
+
+CREATE TABLESPACE DUAL2024 DATAFILE '/u01/app/oracle/product/data2/dual2024.dbf' SIZE 10M;
 
 set lines 200
 col FILE_NAME format a60
 select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
 
+CREATE USER USER_DUAL IDENTIFIED BY 'start123' default tablespace DUAL2024;
+desc dba_users;
+
+grant connect to USER_DUAL; 
+grant create table to USER_DUAL; 
+grant create object to USER_DUAL; 
+alter user USER_DUAL  quota unlimited on DUAL2024;
+
+connect USER_DUAL (start123)
+
 set lines 200 pages 500
 col OBJECT_NAME for a40
 col OWNER for a5
-select OWNER,OBJECT_NAME,OBJECT_TYPE from dba_objects where owner in ('HR');
-
-sqlplus HR/start123
+select OWNER,OBJECT_NAME,OBJECT_TYPE from user_objects;
 
 SELECT SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments WHERE segment_name='your_table_name';
 SELECT SEGMENT_NAME,SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments WHERE segment_name='your_table_name' group by segment_name;
 SELECT SEGMENT_NAME,SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments group by segment_name;
 
+
+AS SYSDBA:
+---------------------------
+set lines 200 pages 500
+col OBJECT_NAME for a40
+col OWNER for a5
+select OWNER,OBJECT_NAME,OBJECT_TYPE from dba_objects where owner in ('HR');
+
+sqlplus USER_DUAL (start123)
+
 # CREATE TABLE TEST as SELECT a.* from all_objects a,all_objects b;
 set time on timing on echo on
 CREATE TABLE TEST as SELECT a.* from all_tables a,all_tables b;
-
 SELECT SEGMENT_NAME,SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments WHERE segment_name='&your_table_name' group by segment_name;
+
 
 # vytvorme si script: vi /tmp/create_table.sql
 spool /tmp/create_table.log
@@ -38,10 +59,40 @@ CREATE TABLE TEST9 as SELECT a.* from all_tables a,all_tables b;
 CREATE TABLE TEST10 as SELECT a.* from all_tables a,all_tables b;
 exit;
 
-SELECT SEGMENT_NAME,SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments group by segment_name;
-sqlplus HR/start123 @/tmp/create_table.sql
+# sqlplus USER_DUAL/start123 @/tmp/create_table.sql
+SQL> @/tmp/create_table.sql
 SELECT SEGMENT_NAME,SUM(bytes)/1024/1024 AS "Table Size (MB)" FROM user_segments group by segment_name;
 
+
+ZALOHA
+--------------------------------
+AS SYSDBA
+select * from dba_directories;
+expdp \'/ as sysdba\' dumpfile=expdp_USER_DUAL.dmp directory=?? schemas=USER_DUAL log=expdp.log
+
+
+TODO
+---------------------------------------------------------------------------------------
+sqlplus USER_DUAL/start123
+desc TEST
+select count(*) from TEST;
+select * from TEST where rownum<2;
+select OWNER, TABLE_NAME from TEST where OWNER like 'HR';
+select OWNER, TABLE_NAME from TEST where OWNER like 'USER_DUAL';
+# delete from TEST;
+--> s+ @dbspace.sql
+--> select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
+# DROP 
+--> s+ @dbspace.sql
+--> select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
+# TRUNCATE 
+--> s+ @dbspace.sql
+--> select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
+
+
+
+OBJEKTY SCHEMY/USERA
+---------------------------------------------------------------------------------
 set lines 200
 set lines 200
 col OBJECT_NAME for a40
@@ -54,22 +105,9 @@ FROM   all_indexes
 WHERE  owner      = UPPER('&1')
 AND    table_name = DECODE(UPPER('&2'), 'ALL', table_name, UPPER('&2'));
 
-TODO
-sqlplus HR/start123
-select count(*) from TEST;
-select * from TEST where rownum<2;
-select OWNER, TABLE_NAME from TEST where OWNER like 'HR';
-# delete from TEST;
---> s+ @dbspace.sql
---> select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
-# DROP 
---> s+ @dbspace.sql
---> select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
-# TRUNCATE 
---> s+ @dbspace.sql
---> select FILE_NAME, FILE_ID, BYTES/1024/1024 MB, TABLESPACE_NAME from dba_data_files;
 
-[C]
+
+--------------------------------------------------------------------------------------------------------
 --> expdp prezentacia
 --> expdp priklady
 mkdir /u01/app/oracle/product/export
@@ -86,7 +124,6 @@ select OBJECT_NAME,OBJECT_TYPE from user_objects;
 
 expdp HR/start123 dumpfile=HR_schema.dmp logfile=HR_schema.log tables=REGIONS directory=EXPORTDIR
 expdp HR/start123 dumpfile=HR_schema.dmp logfile=HR_schema.log directory=EXPORTDIR
-
 
 # EXPDP použitím par file
 file: mojexport.par
@@ -128,8 +165,54 @@ EXCLUDE=TABLES:
 REMAP_SCHEMA=HR:HR2
 REMAP_TABLESPACE=SYSAUX:DATA
 
-
 AS SYSDBA
 expdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
 SQL> create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
 impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
+
+
+Dokoncit ...
+REMOTE EXPORT
+--------------------------------------------------------------
+expdp user@TNSNAMES dumpfile=XXX.dmp directory=DPDIR schemas=??? log=expdp.log
+
+
+
+Dokoncit ...
+OPATCH
+--------------------------------------------------------------
+## https://dbsguru.com/oracle-critical-database-patch-july-2024/
+## https://oracledbwr.com/oracle-release-schedule-of-current-database-releases/
+## https://endoflife.date/oracle-database
+## https://redresscompliance.com/evolution-of-oracle-database-versions-all-major-releases/#Oracle_Database_19c
+
+precheck
+----------------------------------
+select 
+
+
+# sqlplus / as sysdba
+s+
+shu immediate
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
