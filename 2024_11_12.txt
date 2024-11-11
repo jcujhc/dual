@@ -106,7 +106,7 @@ WHERE  owner      = UPPER('&1')
 AND    table_name = DECODE(UPPER('&2'), 'ALL', table_name, UPPER('&2'));
 
 
-
+EXPDP / IMPDP
 --------------------------------------------------------------------------------------------------------
 --> expdp prezentacia
 --> expdp priklady
@@ -167,7 +167,7 @@ REMAP_TABLESPACE=SYSAUX:DATA
 
 AS SYSDBA
 expdp \'/ as sysdba\' dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log
-SQL> create tablespace NEW_TBS datafile '/u01/data/TMYDB/new_tbs_01.dbf' size 5G;
+SQL> create tablespace NEW_TBS datafile '/u01/app/oracle/product/data2/new_tbs_01.dbf' size 5G;
 impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR schemas=STUDENT15 log=expdp.log REMAP_SCHEMA=STUDENT15:IKDB REMAP_TABLESPACE=USERS:NEW_TBS
 
 
