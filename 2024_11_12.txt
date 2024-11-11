@@ -174,11 +174,19 @@ impdp \"/ as sysdba\" dumpfile=expdp_SCH_STUDENT15_24052023.dmp directory=DPDIR 
 Dokoncit ...
 REMOTE EXPORT
 --------------------------------------------------------------
-expdp user@TNSNAMES dumpfile=XXX.dmp directory=DPDIR schemas=??? log=expdp.log
+expdp user@TNSNAMES_RECORD dumpfile=XXX.dmp directory=DPDIR schemas=??? log=expdp.log
+
+## ADSmain
+## select users from MAIN DATABASE
+col USERNAME for a30
+set lines 200 pages 100
+select username,created from dba_users where ORACLE_MAINTAINED='N' order by 1;
+select username, to_char(created , 'dd.mm.yyyy hh24:mi:ss') from dba_users where ORACLE_MAINTAINED='N' order by 1;
+
+## ADSmain
+create or replace directory EXP_ADSmain as '/u01/app/oracle/product/export';
 
 
-
-Dokoncit ...
 OPATCH
 --------------------------------------------------------------
 ## https://dbsguru.com/oracle-critical-database-patch-july-2024/
@@ -207,10 +215,11 @@ lsnrctl status LISTENER_tDB1
 # ak neviem ako sa vola listener kde najdem konfigurak ??
 
 cd $ORACLE_HOME
-mv OPatch/ OPatch_bkp
-unzip p6880880_122010_Linux-x86-64.zip -d $ORACLE_HOME
+mv OPatch/ OPatch_ver_XXX
+unzip p6880880_190000_Linux-x86-64.zip -d $ORACLE_HOME
 $ORACLE_HOME/OPatch/opatch lsinventory
-unzip p28163133_122010_Linux-x86-64.zip
+unzip p31281355_190000_Linux-x86-64.zip
+cd 31281355
 opatch apply
 ./datapatch -verbose
 
