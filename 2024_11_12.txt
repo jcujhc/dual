@@ -68,7 +68,7 @@ ZALOHA
 --------------------------------
 AS SYSDBA
 select * from dba_directories;
-expdp \'/ as sysdba\' dumpfile=expdp_USER_DUAL.dmp directory=?? schemas=USER_DUAL log=expdp.log
+expdp \'/ as sysdba\' dumpfile=expdp_USER_DUAL.dmp directory=EXPORTDIR schemas=USER_DUAL log=expdp.log
 
 
 TODO
