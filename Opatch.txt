@@ -1,0 +1,44 @@
+OPATCH
+--------------------------------------------------------------
+## https://dbsguru.com/oracle-critical-database-patch-july-2024/
+## https://oracledbwr.com/oracle-release-schedule-of-current-database-releases/
+## https://endoflife.date/oracle-database
+## https://redresscompliance.com/evolution-of-oracle-database-versions-all-major-releases/#Oracle_Database_19c
+
+precheck
+----------------------------------
+desc v$database
+select NAME, CREATED ... from
+SELECT PATCH_ID,PATCH_UID,PATCH_TYPE,ACTION,STATUS,ACTION_TIME,DESCRIPTION from dba_registry_sqlpatch;
+
+/u01/app/oracle/product/19c/OPatch/opatch lsinventory
+/u01/app/oracle/product/19c/OPatch/opatch lspatches
+$ORACLE_HOME/OPatch/opatch version
+
+# sqlplus / as sysdba
+s+
+shu immediate
+exit
+
+# check LISTENER
+ps -ef | grep tns
+lsnrctl status LISTENER_tDB1
+# ak neviem ako sa vola listener kde najdem konfigurak ??
+
+cd $ORACLE_HOME
+mv OPatch/ OPatch_ver_XXX
+unzip p6880880_190000_Linux-x86-64.zip -d $ORACLE_HOME
+$ORACLE_HOME/OPatch/opatch lsinventory
+unzip p31281355_190000_Linux-x86-64.zip
+cd 31281355
+opatch apply
+./datapatch -verbose
+
+/u01/app/oracle/product/19c/OPatch/opatch lsinventory
+SELECT PATCH_ID,PATCH_UID,PATCH_TYPE,ACTION,STATUS,ACTION_TIME,DESCRIPTION from dba_registry_sqlpatch;
+
+# startDB
+
+# start LISTENER
+
+# check ci sa viem remotne prihlasit do databazy ako applikacny user
