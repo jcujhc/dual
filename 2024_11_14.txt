@@ -1,0 +1,23 @@
+ Alter database archivelog;
+
+ SQL> alter system switch logfile;
+
+ backup archivelog all;
+
+ backup archivelog all delete input;
+
+ SQL>  alter system set db_recovery_file_dest_size=10g;
+
+SQL>  alter system set db_recovery_file_dest_size=10g;
+
+System altered.
+
+SQL> alter system set db_recovery_file_dest='/u01/app/oracle/product/backups';
+
+restore archivelog from sequence 73 until sequence 77;
+
+backup database archivelog all delete input;
+
+---------------------------------------------------------------------
+
+
