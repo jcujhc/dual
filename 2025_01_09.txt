@@ -156,6 +156,60 @@ PDB6                           READ WRITE
 --------------------------------------------- ---------------------------------------------
 
 
+LISTENER
+---------------------
+LISTENER_DBATEST =
+(DESCRIPTION_LIST =
+(DESCRIPTION =
+(ADDRESS = (PROTOCOL = TCP)(HOST = dbatest-host)(PORT = 1573))
+(ADDRESS = (PROTOCOL = IPC)(KEY = EXTPROC1573))
+)
+)
+ENABLE_GLOBAL_DYNAMIC_ENDPOINT_PDB_LISTENER=ON # line added by Agent
+VALID_NODE_CHECKING_REGISTRATION_PDB_LISTENER=SUBNET # line added by Agent
+
+lsnrctl start LISTENER_DBATEST
+
+
+
+SQL> alter session set container=PDB1;
+
+Session altered.
+
+SQL> show con_name
+
+CON_NAME
+--------
+PDB1
+
+
+SQL> alter system set listener_networks='(( NAME=net1)(LOCAL_LISTENER=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=dbatest-host)(PORT =1573)))))' scope=both;
+
+System altered.
+
+SQL> alter system register;
+
+System altered.
+
+
+lsnrctl status LISTENER_DBATEST
+
+## ADD THE BELOW TNS ENTRY:
+-------------------------------------------
+PDB1 =
+(DESCRIPTION =
+(ADDRESS = (PROTOCOL = TCP)(HOST = dbatest-host)(PORT = 1573))
+(CONNECT_DATA =
+(SERVER = DEDICATED)
+(SERVICE_NAME = pdb1)
+)
+)
+
+
+sqlplus sys/oracle@PDB1 as sysdba
+
+
+
 
 
 
