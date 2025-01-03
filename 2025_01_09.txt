@@ -61,6 +61,10 @@ total 2707412
 [oracle@jcuj TDB1]$ rm -rf temp01.dbf
 
 
+## BACKUP
+
+
+
 
 ## CREATE CONTAINER DB
 ---------------------------------------------
@@ -86,8 +90,74 @@ dbca -silent -createDatabase \
 
 
 
-## XXXX
+## MIGRATE DATABASE -> Using DBMS_PDB
 ---------------------------------------------
+export ORACLE_SID=db12c
+sqlplus / as sysdba
+
+SHUTDOWN IMMEDIATE;
+STARTUP OPEN READ ONLY;
+
+
+-- Describe the non-DBC using the DBMS_PDB.DESCRIBE procedure. This procedure creates 
+-- an XML file in the same way that the unplug operation does for a PDB.
+
+BEGIN
+  DBMS_PDB.DESCRIBE(
+    pdb_descr_file => '/tmp/db12c.xml');
+END;
+/
+
+-- Shutdown the non-CDB database.
+export ORACLE_SID=db12c
+sqlplus / as sysdba
+SHUTDOWN IMMEDIATE;
+
+
+Connect to an existing CDB and create a new PDB using the file describing the non-CDB database. Remember to configure the FILE_NAME_CONVERT parameter to convert the existing files to the new location.
+
+export ORACLE_SID=cdb1
+sqlplus / as sysdba
+
+CREATE PLUGGABLE DATABASE pdb6 USING '/tmp/db12c.xml'
+  COPY
+  FILE_NAME_CONVERT = ('/u01/app/oracle/oradata/db12c/', '/u01/app/oracle/oradata/cdb1/pdb6/');
+Switch to the PDB container and run the "$ORACLE_HOME/rdbms/admin/noncdb_to_pdb.sql" script to clean up the new PDB, removing any items that should not be present in a PDB. You can see an example of the output produced by this script here.
+
+ALTER SESSION SET CONTAINER=pdb6;
+
+@$ORACLE_HOME/rdbms/admin/noncdb_to_pdb.sql
+Startup the PDB and check the open mode.
+
+ALTER SESSION SET CONTAINER=pdb6;
+ALTER PLUGGABLE DATABASE OPEN;
+
+SELECT name, open_mode FROM v$pdbs;
+
+NAME                           OPEN_MODE
+------------------------------ ----------
+PDB6                           READ WRITE
+
+1 row selected.
+
+SQL
+
+
+
+
+
+
+
+
+
+## WITH link
+## https://oracle-base.com/articles/12c/multitenant-clone-remote-pdb-or-non-cdb-12cr1
+--------------------------------------------- ---------------------------------------------
+
+
+
+
+
 
 
 
