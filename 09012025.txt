@@ -1,0 +1,64 @@
+EXTEND
+-------------------------------------------
+   71  df -h
+   72  pvresize /dev/vdb
+   73  pvresize /dev/vdc
+   74  lvextend -l +100%FREE /dev/vgdb/db00
+   75  resize2fs /dev/vgdb/db00
+   76  df -h
+
+
+## DATATAFILES
+## -------------------------------------------------------------
+
+SQL> select file_name, bytes/1024/1024 from dba_data_files;
+
+FILE_NAME                                                    BYTES/1024/1024
+------------------------------------------------------------ ---------------
+/u01/app/oracle/oradata/TDB1/system01.dbf                                950
+/u01/app/oracle/product/data2/TDB1/sysaux01.dbf                         1580
+/u01/app/oracle/product/data2/TDB1/undotbs01.dbf                         345
+/u01/app/oracle/product/data2/TDB1/users01.dbf                             5
+/u01/app/oracle/product/data2/TDB1/newtbs01.dbf                         2048
+/u01/app/oracle/product/data2/dual2024.dbf                               200
+
+SQL> ALTER DATABASE MOVE DATAFILE '/u01/app/oracle/oradata/TDB1/undotbs01.dbf' to '/u01/app/oracle/product/data2/TDB1/undotbs01.dbf';
+
+Database altered.
+
+
+
+
+## TEMP
+## -----------------------
+
+SQL> select FILE_NAME,TABLESPACE_NAME from dba_temp_files;
+
+FILE_NAME
+--------------------------------------------------------------------------------
+TABLESPACE_NAME
+------------------------------
+/u01/app/oracle/oradata/TDB1/temp01.dbf
+TEMP
+
+SQL> alter tablespace TEMP add tempfile '/u01/app/oracle/product/data2/TDB1/temp01.dbf' size 2G;
+
+Tablespace altered.
+
+SQL> alter database tempfile '/u01/app/oracle/oradata/TDB1/temp01.dbf' drop;
+
+Database altered.
+
+[oracle@jcuj ~]$ cd /u01/app/oracle/oradata/TDB1
+[oracle@jcuj TDB1]$ ls -ltr
+total 2707412
+-rw-r-----. 1 oracle oinstall 2154831872 Dec 11 22:00 temp01.dbf
+-rw-r-----. 1 oracle oinstall  209715712 Jan  2 14:09 redo01.log
+-rw-r-----. 1 oracle oinstall  209715712 Jan  2 14:39 redo02.log
+-rw-r-----. 1 oracle oinstall  209715712 Jan  2 14:40 redo03.log
+-rw-r-----. 1 oracle oinstall   10600448 Jan  2 14:40 control01.ctl
+-rw-r-----. 1 oracle oinstall   10600448 Jan  2 14:40 control02.ctl
+[oracle@jcuj TDB1]$ rm -rf temp01.dbf
+
+
+
