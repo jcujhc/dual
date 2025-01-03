@@ -78,7 +78,7 @@ dbca -silent -createDatabase \
  -memoryMgmtType auto_sga \
  -totalMemory 1536 \
  -storageType FS \
- -datafileDestination "/u01/app/oracle/oradata/" \
+ -datafileDestination "/u01/app/oracle/product/data2" \
  -redoLogFileSize 20 \
  -emConfiguration NONE \
  -ignorePreReqs
