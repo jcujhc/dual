@@ -1,11 +1,11 @@
 EXTEND
 -------------------------------------------
-   71  df -h
-   72  pvresize /dev/vdb
-   73  pvresize /dev/vdc
-   74  lvextend -l +100%FREE /dev/vgdb/db00
-   75  resize2fs /dev/vgdb/db00
-   76  df -h
+df -h
+lsblk
+pvresize /dev/vdb
+lvextend -l +100%FREE /dev/vgdb/db00
+resize2fs /dev/vgdb/db00
+df -h
 
 
 ## DATATAFILES
