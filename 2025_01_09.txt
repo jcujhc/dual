@@ -85,7 +85,7 @@ dbca -silent -createDatabase \
  -sysPassword start123 \
  -systemPassword start123 \
  -createAsContainerDatabase true \
- -numberOfPDBs 0 \
+ -numberOfPDBs 1 \
  -pdbName pdb3 \
  -pdbAdminPassword start123 \
  -databaseType MULTIPURPOSE \
