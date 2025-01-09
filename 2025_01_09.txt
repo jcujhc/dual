@@ -73,7 +73,7 @@ alter system set db_recovery_file_dest_size = 20G;
 alter system set db_recovery_file_dest = /u01/app/oracle/product/backup
 
 rman target /
-backup database plus archivelog;
+backup database archivelog all delete input;
 
 
 ## CREATE CONTAINER DB
