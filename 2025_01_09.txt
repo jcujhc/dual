@@ -98,6 +98,10 @@ dbca -silent -createDatabase \
  -ignorePreReqs
 
 
+export ORACLE_SID=cdb3
+export ORACLE_PDB_SID=pdb3
+
+
 ## MIGRATE DATABASE -> Using DBMS_PDB
 ---------------------------------------------
 export ORACLE_SID=tDB1
