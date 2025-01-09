@@ -2,7 +2,7 @@ EXTEND
 -------------------------------------------
 df -h
 lsblk
-pvresize /dev/vdb
+pvresize /dev/sdb
 lvextend -l +100%FREE /dev/vgdb/db00
 resize2fs /dev/vgdb/db00
 df -h
