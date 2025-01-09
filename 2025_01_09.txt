@@ -59,6 +59,8 @@ total 2707412
 [oracle@jcuj TDB1]$ rm -rf temp01.dbf
 
 
+SQL> archive log list;
+
 ## BACKUP
 sqlplus / as sysdba
 shu immediate;
